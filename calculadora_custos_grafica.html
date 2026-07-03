@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Validação de Custos - Gráfica</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #667eea;
+            display: inline-block;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        input[type="number"],
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        input[type="number"]:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .currency {
+            position: absolute;
+            right: 14px;
+            color: #999;
+            font-weight: 600;
+            pointer-events: none;
+        }
+
+        .percentage {
+            position: absolute;
+            right: 14px;
+            color: #999;
+            font-weight: 600;
+            pointer-events: none;
+        }
+
+        input.with-currency {
+            padding-right: 40px;
+        }
+
+        input.with-percentage {
+            padding-right: 30px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .main-result-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-result-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .main-result-value {
+            color: white;
+            font-size: 52px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+
+        .results-box {
+            background: #f8f9fb;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 8px 0;
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+            border-top: 1px solid #ddd;
+            padding-top: 12px;
+        }
+
+        .result-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .result-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #0066cc;
+            padding: 14px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #004085;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f5f5f5;
+            padding: 14px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin-top: 10px;
+            border-left: 4px solid #999;
+            overflow-x: auto;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+
+            header h1 {
+                font-size: 22px;
+            }
+
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-result-value {
+                font-size: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Calculadora de Custos - Gráfica</h1>
+            <p>Calcule rapidamente o novo custo unitário considerando inflação e economia de escala</p>
+        </header>
+
+        <div class="content">
+            <!-- Parâmetros Base -->
+            <div class="section">
+                <div class="section-title">Parâmetros Base (Referência Anterior)</div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Quantidade Anterior (Q1)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="q1" placeholder="Ex: 1000" value="1000" min="1">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Custo Unitário Anterior (CU1)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="cu1" placeholder="Ex: 13.41" value="13.41" min="0.01" step="0.01" class="with-currency">
+                            <span class="currency">R$</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    💡 Use valores de um orçamento anterior como referência para calcular o novo custo com base em inflação e mudanças de volume.
+                </div>
+            </div>
+
+            <!-- Parâmetros de Ajuste -->
+            <div class="section">
+                <div class="section-title">Parâmetros de Ajuste</div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Índice de Inflação (i)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="inflacao" placeholder="Ex: 0.14" value="0.14" step="0.01" class="with-percentage">
+                            <span class="percentage">%</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Nova Quantidade (Q2)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="q2" placeholder="Ex: 1200" value="1200" min="1">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Elasticidade de Escala (e)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="elasticidade" placeholder="Ex: 0.41" value="0.41" step="0.01" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="formula-box">
+                    <strong>Fórmula:</strong><br>
+                    CU2 = CU1 × (1 + i) × (Q2/Q1)^(-e)<br><br>
+                    <strong>Breakdown:</strong><br>
+                    1. Custo ajustado = CU1 × (1 + i)<br>
+                    2. Fator de escala = (Q2/Q1)^(-e)<br>
+                    3. CU2 = Custo ajustado × Fator de escala
+                </div>
+            </div>
+
+            <!-- Resultado Calculado -->
+            <div class="section">
+                <div class="section-title">Resultado</div>
+                
+                <!-- Destaque Principal - Novo Custo Unitário -->
+                <div class="main-result-box">
+                    <div class="main-result-label">Novo Custo Unitário (CU2)</div>
+                    <div class="main-result-value" id="cu2Display">R$ 0,00</div>
+                </div>
+
+                <!-- Resultados Secundários -->
+                <div class="results-box">
+                    <div class="result-item">
+                        <span class="result-label">Custo Ajustado (Inflação)</span>
+                        <span class="result-value" id="custoAjustado">R$ 0,00</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Fator de Escala</span>
+                        <span class="result-value" id="fatorEscala">0,00</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Custo Total (Q2 × CU2)</span>
+                        <span class="result-value" id="custoTotal">R$ 0,00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const inputs = ['q1', 'cu1', 'inflacao', 'q2', 'elasticidade'];
+
+        // Adiciona event listeners aos inputs
+        inputs.forEach(id => {
+            document.getElementById(id).addEventListener('input', calcular);
+        });
+
+        // Calcula os valores
+        function calcular() {
+            const q1 = parseFloat(document.getElementById('q1').value) || 0;
+            const cu1 = parseFloat(document.getElementById('cu1').value) || 0;
+            const inflacao = parseFloat(document.getElementById('inflacao').value) || 0;
+            const q2 = parseFloat(document.getElementById('q2').value) || 0;
+            const elasticidade = parseFloat(document.getElementById('elasticidade').value) || 0;
+
+            if (q1 === 0 || cu1 === 0 || q2 === 0) {
+                limparResultados();
+                return;
+            }
+
+            // Cálculos
+            const custoAjustado = cu1 * (1 + inflacao);
+            const fatorEscala = Math.pow(q2 / q1, -elasticidade);
+            const cu2 = custoAjustado * fatorEscala;
+            const custoTotal = q2 * cu2;
+
+            // Exibir resultados
+            document.getElementById('custoAjustado').textContent = `R$ ${custoAjustado.toFixed(2).replace('.', ',')}`;
+            document.getElementById('fatorEscala').textContent = (fatorEscala * 100).toFixed(0) + '%';
+            document.getElementById('cu2Display').textContent = `R$ ${cu2.toFixed(2).replace('.', ',')}`;
+            document.getElementById('custoTotal').textContent = `R$ ${custoTotal.toFixed(2).replace('.', ',')}`;
+        }
+
+        function limparResultados() {
+            document.getElementById('custoAjustado').textContent = 'R$ 0,00';
+            document.getElementById('fatorEscala').textContent = '0,00';
+            document.getElementById('cu2Display').textContent = 'R$ 0,00';
+            document.getElementById('custoTotal').textContent = 'R$ 0,00';
+        }
+
+        // Calcula ao carregar
+        calcular();
+    </script>
+</body>
+</html>
